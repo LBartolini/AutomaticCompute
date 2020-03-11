@@ -10,13 +10,14 @@ class Formula(object):
 
     def computeAtomicOp(self, operation):
         splitted = []
+
         for op in ['*', '/', '+', '-']:
             temp = operation.split(op)
-            if len(temp) == 2:
+            if len(temp) == 2 and temp[0] != "" and temp[1] != "":
                 temp.append(op)
                 splitted = temp
 
-        if len(splitted) >= 2:
+        if len(splitted) >= 2 and splitted[0] != "":
             if splitted[2] == '+':
                 return str(float(splitted[0]) + float(splitted[1]))
             elif splitted[2] == '-':
@@ -35,7 +36,7 @@ class Formula(object):
         operations = []
         inOp = 0
 
-        for char in formula:
+        for index, char in enumerate(formula):
             if char == "(":
                 if inOp > 0:
                     temp += char
@@ -73,6 +74,7 @@ class Formula(object):
             result = self.computeAtomicOp(operations[0])
             return result
 
+        #This for loop is the recursive center where it computes the values inside the parentheses
         for i, op in enumerate(operations):
             if ('(' not in op or ')' not in op) and len(op) != 1:
                 operations[i] = self.computeAtomicOp(op)
@@ -80,6 +82,7 @@ class Formula(object):
             elif ('(' in op or ')' in op) and len(op) != 1:
                 operations[i] = self.compute(op, iter+1)
 
+        #This for loop compute the result
         for i, op in enumerate(operations):
             if op in ['*', '/', '+', '-']:
                 if self.computeAtomicOp(operations[i-1]) == operations[i-1] and self.computeAtomicOp(operations[i+1]) == operations[i+1]:
@@ -88,6 +91,9 @@ class Formula(object):
                     for _ in range(3):
                         operations.pop(i)
 
+        #This if-statement is needed to get the actual result
         if len(operations) == 1:
             result = self.computeAtomicOp(operations[0])
             return result
+        else:
+            return self.compute(operations, iter+1)

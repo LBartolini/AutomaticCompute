@@ -1,5 +1,5 @@
 import compute
 
-formula = compute.Formula("(((7*5)+5)/4)*(78-8)")
+formula = compute.Formula("(2-10)+(2+1)/10")
 
-print(formula.result())
+print("RESULT :", formula.result())
